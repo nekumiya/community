@@ -54,10 +54,11 @@ public class AuthorizeController {
             //登陆成功，写入cookie和session
 
             User user = new User();
-            user.setToken(UUID.randomUUID().toString());
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
             user.setName(githubUser.getName());
-            String token = String.valueOf(githubUser.getId());
-            user.setAccountId(token);
+            String accountId = String.valueOf(githubUser.getId());
+            user.setAccountId(accountId);
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
 
