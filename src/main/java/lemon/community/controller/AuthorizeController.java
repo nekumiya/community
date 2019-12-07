@@ -50,7 +50,7 @@ public class AuthorizeController {
 
         String accessToken = githubProvider.getAccessToken(accessTokenDto);
         GithubUser githubUser = githubProvider.getUser(accessToken);
-        if(githubUser != null){
+        if(githubUser != null && githubUser.getId() != null){
             //登陆成功，写入cookie和session
 
             User user = new User();
@@ -59,8 +59,9 @@ public class AuthorizeController {
             user.setName(githubUser.getName());
             String accountId = String.valueOf(githubUser.getId());
             user.setAccountId(accountId);
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
+            user.setGmt_create(System.currentTimeMillis());
+            user.setGmt_modified(user.getGmt_create());
+            user.setAvatar_url(githubUser.getAvatar_url());
 
             userMapper.insert(user);
             response.addCookie(new Cookie("token",token));
