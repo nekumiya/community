@@ -58,4 +58,39 @@ public class QuestionService {
 
         return paginationDTO;
     }
+
+
+    public PaginationDTO list(Integer userId, Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+
+        Integer totalCount = questionMapper.countByUserId(userId);
+        paginationDTO.setPagination(totalCount,page,size);
+
+        if (page < 1){
+            page = 1;
+        }
+        if(page > paginationDTO.getTotalPage()){
+            page = paginationDTO.getTotalPage();
+        }
+
+        Integer offset = size*(page-1);    //对应sql中limit的第一个参数
+
+        List<Question> questionList = questionMapper.listByUserId(userId,offset,size);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+
+
+        for (Question question:questionList){
+
+            User user =  userMapper.findById(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question,questionDTO);   //spring中通过反射可以将question的属性快速赋值一份到questionDTO内
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+
+        paginationDTO.setQuestions(questionDTOList);
+
+        return paginationDTO;
+
+    }
 }
