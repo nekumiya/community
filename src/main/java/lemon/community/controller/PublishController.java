@@ -1,7 +1,6 @@
 package lemon.community.controller;
 
 import lemon.community.mapper.QuestionMapper;
-import lemon.community.mapper.UserMapper;
 import lemon.community.model.Question;
 import lemon.community.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -24,8 +21,6 @@ public class PublishController {
     @Autowired
     private QuestionMapper questionMapper;
 
-    @Autowired
-    private UserMapper userMapper;
 
 
     @GetMapping("/publish")
@@ -59,19 +54,7 @@ public class PublishController {
         }
 
 
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie: cookies) {
-            if(cookie.getName().equals("token")){
-                String token = cookie.getValue();
-                user = userMapper.findByToken(token);
-                //System.out.println(user);
-                if (user != null){
-                    request.getSession().setAttribute("user",user);
-                }
-                break;
-            }
-        }
+        User user = (User)request.getSession().getAttribute("user");
         if (user == null){
             model.addAttribute("error","用户未登录");
             return "publish";
